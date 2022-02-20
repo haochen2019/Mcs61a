@@ -128,21 +128,88 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+    last_points0 = 0;last_points1=0
     while score0 < goal and score1 < goal:
         if who == 0:
             number_rolls0 = strategy0(score0, score1)
-            score0 += take_turn(number_rolls0,score1, dice)
+            turn_socre= take_turn(number_rolls0,score1, dice)
+            score0 += turn_socre
+            if feral_hogs and abs(number_rolls0-last_points0)==2:
+                score0 += 3
             if is_swap(score0, score1):
                 score0,score1 = score1,score0
+            last_points0 = turn_socre
+            
         else:
             number_rolls1 = strategy1(score1, score0)
-            score1 += take_turn(number_rolls1, score0, dice)
+            turn_socre = take_turn(number_rolls1, score0, dice)
+            score1 += turn_socre
+            if feral_hogs and abs(number_rolls1-last_points1)==2:
+                score1 += 3
             if is_swap(score1, score0):
                 score0,score1 = score1,score0
+            last_points1 = turn_socre
+        say = say(score0,score1)
+        print("DEBUG: score0,score1:",score0,score1)
+
         who = other(who)
     # END PROBLEM 6
     return score0, score1
 
+
+# def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
+#          goal=GOAL_SCORE, say=silence, feral_hogs=True):
+#     """Simulate a game and return the final scores of both players, with Player
+#     0's score first, and Player 1's score second.
+#     A strategy is a function that takes two total scores as arguments (the
+#     current player's score, and the opponent's score), and returns a number of
+#     dice that the current player will roll this turn.
+#     strategy0:  The strategy function for Player 0, who plays first.
+#     strategy1:  The strategy function for Player 1, who plays second.
+#     score0:     Starting score for Player 0
+#     score1:     Starting score for Player 1
+#     dice:       A function of zero arguments that simulates a dice roll.
+#     goal:       The game ends and someone wins when this score is reached.
+#     say:        The commentary function to call at the end of the first turn.
+#     feral_hogs: A boolean indicating whether the feral hogs rule should be active.
+#     """
+#     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
+#     # BEGIN PROBLEM 5
+#     "*** YOUR CODE HERE ***"
+#     last_turn_score0, last_turn_score1 = 0, 0
+#     turn = 0
+#     while score0 < goal and score1 < goal:
+#         if who == 0:
+#             num_rolls = strategy0(score0, score1)
+#             this_turn_score = take_turn(num_rolls, score1, dice)
+#             score0 += this_turn_score
+#             if feral_hogs and abs(last_turn_score0 - num_rolls) == 2:
+#                 score0 += 3
+#             if is_swap(score0, score1):
+#                 score0, score1 = score1, score0
+#             last_turn_score0 = this_turn_score
+#         else:
+#             num_rolls = strategy1(score1, score0)
+#             this_turn_score = take_turn(num_rolls, score0, dice)
+#             score1 += this_turn_score
+#             if feral_hogs and abs(last_turn_score1 - num_rolls) == 2:
+#                 score1 += 3
+#             if is_swap(score1, score0):
+#                 score0, score1 = score1, score0
+#             last_turn_score1 = this_turn_score
+#         who = other(who)
+#     # END PROBLEM 5
+#     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
+#     # BEGIN PROBLEM 6
+#         "*** YOUR CODE HERE ***"
+#         # if turn == 0:
+#         #     comment = say(score0, score1)
+#         # else:
+#         #     comment = comment(score0, score1)
+#         # turn += 1
+#         print("DEBUG: score0,score1:",score0,score1)
+#     # END PROBLEM 6
+#     return score0, score1
 
 #######################
 # Phase 2: Commentary #
@@ -226,6 +293,25 @@ def announce_highest(who, last_score=0, running_high=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(score0, score1):
+        if who == 0:
+            incre = score0 - last_score
+            cur_score = score0
+        else:
+            incre = score1 - last_score
+            cur_score = score1
+        
+        # nonlocal running_high
+        #不能这样用，因为这样就改动了parent的running_high,用f2_again会犯错
+        # if incre > running_high:
+        #     print(incre, "point(s)! That's the biggest gain yet for Player",who)
+        #     running_high = incre
+        cur_high = running_high
+        if incre > running_high:
+            print(incre, "point(s)! That's the biggest gain yet for Player",who)
+            cur_high = incre
+        return announce_highest(who, cur_score ,cur_high)
+    return say
     # END PROBLEM 7
 
 
@@ -265,6 +351,12 @@ def make_averaged(original_function, trials_count=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    # sum = 0
+    # def aver(*args):
+    #     for i in range(trials_count):
+    #         sum += original_function()
+    #     return sum/trials_count
+    # return aver
     # END PROBLEM 8
 
 
