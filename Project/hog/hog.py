@@ -351,12 +351,13 @@ def make_averaged(original_function, trials_count=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
-    # sum = 0
-    # def aver(*args):
-    #     for i in range(trials_count):
-    #         sum += original_function()
-    #     return sum/trials_count
-    # return aver
+    
+    def aver(*args):
+        sum = 0
+        for i in range(trials_count):
+            sum += original_function(*args)
+        return sum/trials_count
+    return aver
     # END PROBLEM 8
 
 
@@ -371,6 +372,14 @@ def max_scoring_num_rolls(dice=six_sided, trials_count=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    maxAvg = 0
+    for i in range(1,11):
+        ori = roll_dice
+        cur_aver = make_averaged(ori,trials_count)(i,dice)
+        if cur_aver > maxAvg :
+            maxAvg = cur_aver
+            minIndex = i
+    return minIndex
     # END PROBLEM 9
 
 
@@ -420,7 +429,10 @@ def bacon_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    return 6  # Replace this statement
+    points = free_bacon(opponent_score)
+    if points >= cutoff:
+        return 0
+    return num_rolls
     # END PROBLEM 10
 
 
@@ -429,8 +441,27 @@ def swap_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     rolls 0 dice if it gives at least CUTOFF points and does not trigger a
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
-    # BEGIN PROBLEM 11
-    return 6  # Replace this statement
+    #BEGIN PROBLEM 11
+    point = take_turn(0,opponent_score)
+    if is_swap(point+score, opponent_score):
+        if point+score < opponent_score:
+            return 0
+        else:
+            return num_rolls
+    if point >= cutoff:
+        return 0
+    return num_rolls
+    # fb = free_bacon(opponent_score)
+    # if is_swap(score + fb, opponent_score):
+    #     if opponent_score <= score + fb:
+    #         return num_rolls
+    #     else:
+    #         return 0
+    # else:
+    #     if fb >= cutoff:
+    #         return 0
+    #     else:
+    #         return num_rolls 
     # END PROBLEM 11
 
 
